@@ -8,7 +8,10 @@ import random
 
 class NumberOfIslands:
     def __init__(self, graph, algorithm="dfs", contiguity="rook", is_land=None, out=False, out_folder='data'):
-        sys.setrecursionlimit(100000)
+
+        # too low and dfs will hit python's recursion limit
+        # too high and the program will segfault
+        sys.setrecursionlimit(20000)
 
         self.graph = graph  # grid is a list of 3 numpy arrays pertaining to 3 bands (i.e. r, g, b)
         self.height = graph[0].shape[0]
@@ -140,6 +143,7 @@ class NumberOfIslands:
         effects: 
         returns: 
         """
+
         # ensure location is within the raster's bounds
         return (row >= 0) and (row < self.height) and (col >= 0) and (col < self.width)
 
@@ -168,6 +172,7 @@ class NumberOfIslands:
             n_c = col + n[1]
 
             if self.is_valid(n_r, n_c) and not self.visited[n_r][n_c]:
+
                 # Case: land
                 if self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]):
                     self.dfs(n_r, n_c)
@@ -188,13 +193,17 @@ class NumberOfIslands:
         effects: write state of search to a new raster if self.out is set
         returns: 
         """
+
         rs, gs, bs = self.graph
 
         # mark cell as visited
         self.visited[row][col] = 1
+
+        # enqueue cell to visit it's neighbors in the future
         self.queue.append([row, col])
 
         while self.queue:
+            # dequeue cell to visit it's neighbors
             s = self.queue.pop(0)
 
             # if visualizing, skip some cells to save memory
@@ -205,14 +214,15 @@ class NumberOfIslands:
                 n_r = s[0] + n[0]
                 n_c = s[1] + n[1]
 
-                # if self.is_valid(n_r, n_c) and self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]) and not self.visited[n_r][n_c]:
-                #     self.visited[n_r][n_c] = 1
-                #     self.queue.append([n_r, n_c])
-
                 if self.is_valid(n_r, n_c) and not self.visited[n_r][n_c]:
+
                     # Case: land
                     if self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]):
+
+                        # mark cell as visited
                         self.visited[n_r][n_c] = 1
+
+                        # enqueue cell to visit it's neighbors in the future
                         self.queue.append([n_r, n_c])
 
                     # Case: shore (water near land)
@@ -224,39 +234,44 @@ class NumberOfIslands:
 
     def number_of_islands(self):
         """
-        traverse raster, trigger bfs or dfs when land is hit
+        traverse raster, trigger bfs or dfs when land is hit.
+        when unvisited land is hit, the counter is incremented and a search algorithm "visits" the rest of the contiguous land
 
         args: 
         effects: write state of search to a new raster if self.out is set
         returns: count (number of islands in input raster)
         """
 
-
         # if input raster has incorrect shape do nothing
         if not self.graph or not self.width or not self.height:
             return 0
-            
+        
+        rs, gs, bs = self.graph
+        self.visited = np.zeros(rs.shape)   # re-init visited
         row = self.height
         col = self.width
         count = 0
-
-        rs, gs, bs = self.graph
-        self.visited = np.zeros(rs.shape)   # re-init visited
         
-        for i in range(0, row):
-            for j in range(0, col):
+        try:
+            for i in range(0, row):
+                for j in range(0, col):
+                    if not self.visited[i][j]:
 
-                # if visualizing, skip some cells to save memory
-                if self.out and not self.visited[i][j] and (j % 20 == 0):
-                    self.color_cursor(i, j)
+                        # if visualizing, skip some cells to save memory
+                        if self.out and (j % 20 == 0):
+                            self.color_cursor(i, j)
 
-                # Case: Land
-                if self.is_land(rs[i][j], gs[i][j], bs[i][j]) and not self.visited[i][j]:
-                    self.algorithm(i, j)
-                    count += 1
+                        # Case: Land
+                        if self.is_land(rs[i][j], gs[i][j], bs[i][j]):
+                            self.algorithm(i, j)
+                            count += 1
 
-                # Case: Water (not near land) (OPTIONAL)
-                # elif self.grid[i][j] == 0:
-                #     self.grid[i][j] = ' '
+                        # Case: Water (not near land) (OPTIONAL)
+                        # elif not self.is_land(rs[i][j], gs[i][j], bs[i][j]):
+                        #     pass
+
+            return count
+
+        except RecursionError:
+            print("Error:\tThe Python Recursion Limit has been reached.\n\tTry Breadth First Search ('bfs') or a smaller input raster.]n")
             
-        return count
