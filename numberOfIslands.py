@@ -9,7 +9,7 @@ import random
 class NumberOfIslands:
     def __init__(self, graph, algorithm="dfs", contiguity="rook", is_land=None, out=False, out_folder='data'):
         sys.setrecursionlimit(100000)
-        
+
         self.graph = graph  # grid is a list of 3 numpy arrays pertaining to 3 bands (i.e. r, g, b)
         self.height = graph[0].shape[0]
         self.width = graph[0].shape[1]
@@ -199,7 +199,7 @@ class NumberOfIslands:
 
             # if visualizing, skip some cells to save memory
             if self.out and (s[1] % 4 == 0):
-                self.color_cursor(s[0], s[0])
+                self.color_cursor(s[0], s[1])
 
             for i, n in enumerate(self.contiguity):
                 n_r = s[0] + n[0]
