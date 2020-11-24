@@ -1,10 +1,8 @@
 import os
 import sys
-import time
 
 import rasterio
 import numpy as np
-import random
 
 class NumberOfIslands:
     def __init__(self, graph, algorithm="dfs", contiguity="rook", is_land=None, out=False, out_folder='data'):
@@ -152,9 +150,11 @@ class NumberOfIslands:
         Depth First Search
         see: https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
 
-        note: due to python's recursion limitations, this will fail on large rasters
-        args: (row, col), the location of the cell being visited
-        effects: write state of search to a new raster if self.out is set
+        note:       due to python's recursion limitations, this will fail on large rasters.
+                    workarounds exist but obscure the nature of the algorithm
+                    see: https://stackoverflow.com/questions/28660685/recursion-depth-issue-using-python-with-dfs-algorithm
+        args:       (row, col), the location of the cell being visited
+        effects:    write state of search to a new raster if self.out is set
         returns: 
         """
 
@@ -189,8 +189,8 @@ class NumberOfIslands:
         Breadth First Search
         see: https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
 
-        args: (row, col), the location of the cell being visited
-        effects: write state of search to a new raster if self.out is set
+        args:       (row, col), the location of the cell being visited
+        effects:    write state of search to a new raster if self.out is set
         returns: 
         """
 
