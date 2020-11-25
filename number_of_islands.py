@@ -11,7 +11,10 @@ class NumberOfIslands:
         # too high and the program will segfault
         sys.setrecursionlimit(20000)
 
-        self.graph = graph  # grid is a list of 3 numpy arrays pertaining to 3 bands (i.e. r, g, b)
+        # copy data so subsequent calls have original data
+        # grid is a list of 3 numpy arrays pertaining to 3 bands (i.e. r, g, b)
+        self.graph = [band.copy() for band in graph]
+        
         self.height = graph[0].shape[0]
         self.width = graph[0].shape[1]
         self.visited = np.zeros(self.graph[0].shape) # keep record of visitations in memory -> no double-visiting
@@ -173,6 +176,9 @@ class NumberOfIslands:
 
             if self.is_valid(n_r, n_c) and not self.visited[n_r][n_c]:
 
+                # mark cell as visited
+                self.visited[n_r][n_c] = 1
+
                 # Case: land
                 if self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]):
                     self.dfs(n_r, n_c)
@@ -248,8 +254,8 @@ class NumberOfIslands:
         """
 
         # if input raster has incorrect shape do nothing
-        if not self.graph or not self.width or not self.height:
-            return 0
+        if not self.graph or not len(self.graph)==3 or not self.width or not self.height:
+            raise Exception("Input raster has incorrect shape\n")
         
         rs, gs, bs = self.graph
         self.visited = np.zeros(rs.shape)   # re-init visited
@@ -278,5 +284,4 @@ class NumberOfIslands:
             return count
 
         except RecursionError:
-            print("Error:\tThe Python Recursion Limit has been reached.\n\tTry Breadth First Search ('bfs') or a smaller input raster.\n")
-            
+            raise Exception("The Python Recursion Limit has been reached. Try Breadth First Search ('bfs') or a smaller input raster.\n") 
