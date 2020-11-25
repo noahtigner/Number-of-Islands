@@ -26,7 +26,7 @@ class NumberOfIslands:
         self.out = out
         self.out_folder = out_folder
         self.out_options = {
-            'driver': 'GTiff', # TODO: smaller file type?
+            'driver': 'GTiff',
             'dtype': 'uint8', 
             'nodata': None, 
             'width': self.width if (self.width % 2) == 0 else self.width-1,     # must be even
@@ -49,7 +49,7 @@ class NumberOfIslands:
 
         self.colors = {
             'cursor':  [205, 0, 0],
-            # 'land':     [50, 250, 50],
+            'land':     [50, 250, 50],
             'shore':     [250, 100, 50],
         }
         self.previous_color = [0, 0, 0]
@@ -216,14 +216,19 @@ class NumberOfIslands:
 
                 if self.is_valid(n_r, n_c) and not self.visited[n_r][n_c]:
 
+                    # mark cell as visited
+                    self.visited[n_r][n_c] = 1
+
                     # Case: land
                     if self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]):
 
-                        # mark cell as visited
-                        self.visited[n_r][n_c] = 1
-
                         # enqueue cell to visit it's neighbors in the future
                         self.queue.append([n_r, n_c])
+
+                        # r, g, b = self.colors['land']
+                        # rs[n_r][n_c] = r
+                        # gs[n_r][n_c] = g
+                        # bs[n_r][n_c] = b
 
                     # Case: shore (water near land)
                     else:
@@ -273,5 +278,5 @@ class NumberOfIslands:
             return count
 
         except RecursionError:
-            print("Error:\tThe Python Recursion Limit has been reached.\n\tTry Breadth First Search ('bfs') or a smaller input raster.]n")
+            print("Error:\tThe Python Recursion Limit has been reached.\n\tTry Breadth First Search ('bfs') or a smaller input raster.\n")
             
