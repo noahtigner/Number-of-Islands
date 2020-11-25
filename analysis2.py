@@ -2,7 +2,7 @@ import os
 import time
 import rasterio
 
-from numberOfIslands import NumberOfIslands
+from number_of_islands import NumberOfIslands
 
 def is_land(r, g, b):
     # return not ((((r >= 70 and r <= 160) and (g >= 95 and g <= 200) and (b > 115)) or (r < 70 or g < 70 or b < 70)) and not (r>=115 and r<=160 and g>=140 and g<=196 and b>=115 and b<=170)) or (r>200 and g>200 and b>200) and ((r>=121 or r<=126) and (g>=135 or g<=140) and (b>=117 or b<=122))

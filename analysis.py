@@ -2,7 +2,7 @@ import os
 import time
 import rasterio
 
-from numberOfIslands import NumberOfIslands
+from number_of_islands import NumberOfIslands
 
 water = set()
 for i in range(14):
