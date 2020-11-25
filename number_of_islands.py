@@ -14,16 +14,17 @@ class NumberOfIslands:
         # copy data so subsequent calls have original data
         # grid is a list of 3 numpy arrays pertaining to 3 bands (i.e. r, g, b)
         self.graph = [band.copy() for band in graph]
-        
+
         self.height = graph[0].shape[0]
         self.width = graph[0].shape[1]
         self.visited = np.zeros(self.graph[0].shape) # keep record of visitations in memory -> no double-visiting
-        self.queue = [] # used for bfs
+        self.queue = [] # FIFO data structure used for bfs
+        self.stack = [] # LIFO data structure used for dfs'
 
         self.neighbors_rook = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # N, E, S, W
         self.neighbors_queen = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (-1, 1), (0, -1), (-1, -1)]  # N, NE, E, SE, S, SW, W, NW
         
-        self.algorithm = {"dfs": self.dfs, "bfs": self.bfs}[algorithm]
+        self.algorithm = {"dfs": self.dfs, "bfs": self.bfs, "dfs'": self.dfs_prime}[algorithm]
         self.contiguity = {"rook": self.neighbors_rook, "queen": self.neighbors_queen}[contiguity]
 
         self.out = out
@@ -170,7 +171,7 @@ class NumberOfIslands:
         if self.out and (col % 4 == 0):
             self.color_cursor(row, col)
 
-        for i, n in enumerate(self.contiguity):
+        for n in self.contiguity:
             n_r = row + n[0]
             n_c = col + n[1]
 
@@ -189,6 +190,51 @@ class NumberOfIslands:
                     rs[n_r][n_c] = r
                     gs[n_r][n_c] = g
                     bs[n_r][n_c] = b
+
+    def dfs_prime(self, row, col):
+        rs, gs, bs = self.graph
+
+        # mark cell as visited
+        self.visited[row][col] = 1
+
+        # push cell to visit it's neighbors in the future
+        self.stack.append([row, col])
+
+        while self.stack:
+            # pop last cell to visit it's neighbors
+            s = self.stack.pop()
+
+            # if visualizing, skip some cells to save memory
+            if self.out and (s[1] % 4 == 0):
+                self.color_cursor(s[0], s[1])
+
+            for n in self.contiguity:
+                n_r = s[0] + n[0]
+                n_c = s[1] + n[1]
+
+                if self.is_valid(n_r, n_c) and not self.visited[n_r][n_c]:
+
+                    # mark cell as visited
+                    self.visited[n_r][n_c] = 1
+
+                    # Case: land
+                    if self.is_land(rs[n_r][n_c], gs[n_r][n_c], bs[n_r][n_c]):
+
+                        # push cell to visit it's neighbors in the future
+                        self.stack.append([n_r, n_c])
+
+                        # # color land
+                        # r, g, b = self.colors['land']
+                        # rs[n_r][n_c] = r
+                        # gs[n_r][n_c] = g
+                        # bs[n_r][n_c] = b
+
+                    # Case: shore (water near land)
+                    else:
+                        r, g, b = self.colors['shore']
+                        rs[n_r][n_c] = r
+                        gs[n_r][n_c] = g
+                        bs[n_r][n_c] = b
 
     def bfs(self, row, col):
         """
@@ -209,14 +255,14 @@ class NumberOfIslands:
         self.queue.append([row, col])
 
         while self.queue:
-            # dequeue cell to visit it's neighbors
+            # dequeue first cell to visit it's neighbors
             s = self.queue.pop(0)
 
             # if visualizing, skip some cells to save memory
             if self.out and (s[1] % 4 == 0):
                 self.color_cursor(s[0], s[1])
 
-            for i, n in enumerate(self.contiguity):
+            for n in self.contiguity:
                 n_r = s[0] + n[0]
                 n_c = s[1] + n[1]
 
@@ -231,6 +277,7 @@ class NumberOfIslands:
                         # enqueue cell to visit it's neighbors in the future
                         self.queue.append([n_r, n_c])
 
+                        # # color land
                         # r, g, b = self.colors['land']
                         # rs[n_r][n_c] = r
                         # gs[n_r][n_c] = g
@@ -284,4 +331,5 @@ class NumberOfIslands:
             return count
 
         except RecursionError:
-            raise Exception("The Python Recursion Limit has been reached. Try Breadth First Search ('bfs') or a smaller input raster.\n") 
+            # warn but continue execution (in case of subsequent calls)
+            print("Error: The Python Recursion Limit has been reached. Try bfs, dfs', or a smaller input raster.\n") 
