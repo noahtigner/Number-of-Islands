@@ -19,6 +19,10 @@ Depth First Search' uses an in-memory last-in-first-out stack. It is typically t
 
 Breadth First Search uses an in-memory first-in-first out queue.
 
+### Use
+
+An example of the use of the NumberOfIslands module can be seen in analysis.py
+
 ### Development
 
 Analysis performed on Blue Marble dataset, courtesy of NASA.
