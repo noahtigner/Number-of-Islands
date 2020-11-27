@@ -103,7 +103,7 @@ class NumberOfIslands:
         self.previous_color = [rs[row][col], gs[row][col], bs[row][col]]
 
         # color current cell
-        r, g, b = self.colors['cursor']
+        r, g, b = self.colors['shore']
         rs[row][col] = r
         gs[row][col] = g
         bs[row][col] = b
@@ -192,6 +192,17 @@ class NumberOfIslands:
                     bs[n_r][n_c] = b
 
     def dfs_prime(self, row, col):
+        """
+        Depth First Search
+        see: https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
+
+        note:       this version uses a stack in memory instead of the call stack, which avoids issues with recursion depth
+                    see: https://stackoverflow.com/questions/28660685/recursion-depth-issue-using-python-with-dfs-algorithm
+        args:       (row, col), the location of the cell being visited
+        effects:    write state of search to a new raster if self.out is set
+        returns: 
+        """
+
         rs, gs, bs = self.graph
 
         # mark cell as visited
@@ -302,7 +313,7 @@ class NumberOfIslands:
 
         # if input raster has incorrect shape do nothing
         if not self.graph or not len(self.graph)==3 or not self.width or not self.height:
-            raise Exception("Input raster has incorrect shape\n")
+            raise Exception("Input raster has incorrect shape")
         
         rs, gs, bs = self.graph
         self.visited = np.zeros(rs.shape)   # re-init visited
@@ -311,6 +322,11 @@ class NumberOfIslands:
         count = 0
         
         try:
+            # add some frames to beginning of visualization
+            if self.out:
+                for k in range(60):
+                    self.color_cursor(0, 0)
+
             for i in range(0, row):
                 for j in range(0, col):
                     if not self.visited[i][j]:
@@ -328,8 +344,13 @@ class NumberOfIslands:
                         # elif not self.is_land(rs[i][j], gs[i][j], bs[i][j]):
                         #     pass
 
+            # add some frames to beginning of visualization
+            if self.out:
+                for k in range(60):
+                    self.color_cursor(row-1, col-1)
+
             return count
 
         except RecursionError:
             # warn but continue execution (in case of subsequent calls)
-            print("Error: The Python Recursion Limit has been reached. Try bfs, dfs', or a smaller input raster.\n") 
+            raise Exception("Error: The Python Recursion Limit has been reached. Try bfs, dfs', or a smaller input raster.\n") 
