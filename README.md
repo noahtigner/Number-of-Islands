@@ -11,7 +11,7 @@ This tool runs analyzes geospatial raster imagery to identify the number and loc
 | 426 x 240 (240p)  | 0.562              | 0.534               | 0.534                |
 | 854 x 480 (480p)  | -                  | 2.232               | 2.540                |
 | 1280 x 720 (720p) | -                  | 8.720               | 8.528                |
-| 1800 x 3600       | -                  | 39.31               | 44.290               |
+| 1800 x 3600       | -                  | 41.965               | 42.225               |
 
 Depth First Search uses recursion to make use of the call stack to save memory. It is therefore limited by Python's recursion limit and will fail on large datasets.
 
