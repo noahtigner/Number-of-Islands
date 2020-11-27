@@ -9,6 +9,7 @@ def is_land_simple(r, g, b):
     return r > 12
 
 def is_land_comparison(r, g, b):
+    # compare pixel to pixels known to be water
     # water = set()
     # for i in range(4):
     #     with rasterio.open(f'in/water{i}.tif') as dataset:
@@ -49,7 +50,7 @@ def run(raster, algorithm, is_land, out, out_folder, prints=True):
 
 filename = os.path.join(os.path.dirname(__file__), 'out')
 
-rasters = ["in/nasa_blueMarble_240p2.tiff", "in/nasa_blueMarble_480p2.tiff", "in/nasa_blueMarble_720p.tiff"]
+rasters = ["in/nasa_blueMarble_240p.tiff", "in/nasa_blueMarble_480p.tiff", "in/nasa_blueMarble_720p.tiff"]
 algorithms = ["dfs", "dfs'", "bfs"]
 
 for raster in rasters:
@@ -64,6 +65,6 @@ for raster in rasters:
 
     print(f"{raster}:\t{times}")
 
-# with rasterio.open(rasters[1]) as dataset:
+# with rasterio.open(rasters[3]) as dataset:
 #     rs, gs, bs = dataset.read()[0:3]
 # run(raster=[rs, gs, bs], algorithm="bfs", is_land=is_land, out=False, out_folder=filename)
