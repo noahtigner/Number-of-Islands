@@ -234,12 +234,6 @@ class NumberOfIslands:
                         # push cell to visit it's neighbors in the future
                         self.stack.append([n_r, n_c])
 
-                        # # color land
-                        # r, g, b = self.colors['land']
-                        # rs[n_r][n_c] = r
-                        # gs[n_r][n_c] = g
-                        # bs[n_r][n_c] = b
-
                     # Case: shore (water near land)
                     else:
                         r, g, b = self.colors['shore']
@@ -288,12 +282,6 @@ class NumberOfIslands:
                         # enqueue cell to visit it's neighbors in the future
                         self.queue.append([n_r, n_c])
 
-                        # # color land
-                        # r, g, b = self.colors['land']
-                        # rs[n_r][n_c] = r
-                        # gs[n_r][n_c] = g
-                        # bs[n_r][n_c] = b
-
                     # Case: shore (water near land)
                     else:
                         r, g, b = self.colors['shore']
@@ -341,8 +329,6 @@ class NumberOfIslands:
                             count += 1
 
                         # Case: Water (not near land) (OPTIONAL)
-                        # elif not self.is_land(rs[i][j], gs[i][j], bs[i][j]):
-                        #     pass
 
             # add some frames to beginning of visualization
             if self.out:
