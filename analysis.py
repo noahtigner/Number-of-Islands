@@ -80,22 +80,23 @@ rasters = ["in/nasa_blueMarble_240p.tiff", "in/nasa_blueMarble_480p.tiff", "in/n
 algorithms = ["dfs", "dfs'", "bfs"]
 
 # read in 3 bands from input raster
-with rasterio.open(rasters[3]) as dataset:
+with rasterio.open(rasters[1]) as dataset:
     rs, gs, bs = dataset.read()[0:3]
 
 # simple example of module use
-run(raster=[rs, gs, bs], algorithm="bfs", is_land=is_land, out=False, out_folder=filename)
+# run(raster=[rs, gs, bs], algorithm="bfs", is_land=is_land, out=False, out_folder=filename)
 
 # complec example of module use - for comparing algorithms
 # for each raster, print the elapsed time of each algorithm
 for raster in rasters:
     times = {algo: [] for algo in algorithms}
 
-    for iteration in range(5):
-        with rasterio.open(raster) as dataset:
-            rs, gs, bs = dataset.read()[0:3]
+    with rasterio.open(raster) as dataset:
+        rs, gs, bs = dataset.read()[0:3]
+
+    for trial in range(5):  # 5 trials per algorithm per raster
         for algo in algorithms:
             (e, n) = run(raster=[rs, gs, bs], algorithm=algo, is_land=is_land, out=False, out_folder=filename, prints=False)
-            times[algo].append(e)
+            times[algo].append(e)   # add trial time for that algorithm for that raster
 
-    print(f"{raster}:\t{times}")
+    print(f"{raster}:\t{times}")    # print trial times for all algorithms for this raster
